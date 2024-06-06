@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-receiver
+  name: web-service-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-receiver
+      app: web-service
   template:
     metadata:
       labels:
-        app: hello-receiver
+        app: web-service
     spec:
       containers:
-      - name: hello-receiver
-        image: hello_receiver:latest
+      - name: web-service
+        image: web_service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

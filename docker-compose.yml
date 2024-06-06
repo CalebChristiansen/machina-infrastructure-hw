@@ -1,0 +1,16 @@
+version: '3'
+services:
+  broadcaster-service:
+    build: ./hello_broadcaster
+    depends_on:
+      - receiver-service
+  receiver-service:
+    build: ./hello_receiver
+    ports:
+      - "5001:5001"
+  web-service:
+    build: ./web_service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - receiver-service

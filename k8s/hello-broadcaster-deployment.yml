@@ -1,20 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-interface
+  name: hello-broadcaster-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web-interface
+      app: hello-broadcaster
   template:
     metadata:
       labels:
-        app: web-interface
+        app: hello-broadcaster
     spec:
       containers:
-      - name: web-interface
-        image: web_interface:latest
+      - name: hello-broadcaster
+        image: hello_broadcaster:latest
         imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8080

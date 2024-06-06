@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-broadcaster
+  name: hello-receiver-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-broadcaster
+      app: hello-receiver
   template:
     metadata:
       labels:
-        app: hello-broadcaster
+        app: hello-receiver
     spec:
       containers:
-      - name: hello-broadcaster
-        image: hello_broadcaster:latest
+      - name: hello-receiver
+        image: hello_receiver:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - containerPort: 5001
