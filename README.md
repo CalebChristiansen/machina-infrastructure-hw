@@ -1,24 +1,60 @@
-# infrastructure-hw
+# Hello World Application
 
-## Your mission
+This application broadcasts "Hello world" messages at random intervals and displays them on a web interface in real-time.
 
-For this assignment, you're going to create the infrastructure for an application with a small set of services.
+## Services
 
-- One service needs to broadcast `Hello world` at random intervals. Make the interval anywhere from 1 to 10 seconds, with each the time until the next broadcast each chosen randomly.
+- **Broadcaster**: Sends "Hello world" messages at random intervals.
+- **Receiver**: Receives the messages and provides an API to fetch them.
+- **Web Interface**: Displays the messages in real-time.
 
-- Another service needs to receive the `Hello world` broadcasts.
+## Setup
 
-- Then a user should be able to view the `Hello world` broadcasts, as they arrive, from a web browser.
+### Prerequisites
 
-### Other requirements
+- Docker
+- Minikube
+- Kubernetes
 
-- Use whatever languages and frameworks you want to create the services.
-- We're aiming to just run this application on an engineer's local machine, not the cloud; design your solution for `minikube`
-- Your solution should have the minimum number of manual setup steps necessary.
-- Use any adjacent infrastructure tools you think make for a more elegant solution.
+### Instructions for Windows
 
-## Submission
+1. Start Minikube:
 
-- Fork this repository on GitHub. Develop a solution on your fork. Extra points for good git hygiene.
-- Include specific instructions in your README about pre-requisites and setup steps. Another engineer should be able to go from zero to running your solution on their local machine.
-- Either send us the link to your repository (if you make it public) or email us a zipped-up folder.
+   ```powershell
+   minikube start --driver=docker
+   ```
+
+2. Ensure Docker is using the Minikube Docker daemon:
+
+    ```powershell
+    & minikube -p minikube docker-env --shell powershell | Invoke-Expression
+    ```
+
+3. Build Docker images:
+
+    ```powershell
+    docker build -t hello_broadcaster:latest -f broadcaster/Dockerfile broadcaster/
+    docker build -t hello_receiver:latest -f receiver/Dockerfile receiver/
+    docker build -t web_interface:latest -f web_interface/Dockerfile web_interface/
+    ```
+
+4. Apply Kubernetes deployments and services:
+
+    ```powershell
+    kubectl apply -f broadcaster/broadcaster-deployment.yaml
+    kubectl apply -f receiver/receiver-deployment.yaml
+    kubectl apply -f web_interface/web-interface-deployment.yaml
+
+    kubectl apply -f services/broadcaster-service.yaml
+    kubectl apply -f services/receiver-service.yaml
+    kubectl apply -f services/web-interface-service.yaml
+
+    ```
+
+5. Access the web interface:
+
+    ```powershell
+    minikube service web-interface
+    ```
+
+    Open the provided URL in your web browser to view the "Hello world" messages in real-time.

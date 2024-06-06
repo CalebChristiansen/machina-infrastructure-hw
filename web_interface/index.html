@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World Messages</title>
+    <script>
+        async function fetchMessages() {
+            const response = await fetch('/messages');
+            const messages = await response.json();
+            document.getElementById('messages').innerHTML = messages.join('<br>');
+        }
+        setInterval(fetchMessages, 1000);
+    </script>
+</head>
+<body>
+    <h1>Hello World Messages</h1>
+    <div id="messages"></div>
+</body>
+</html>

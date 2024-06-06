@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-receiver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-receiver
+  template:
+    metadata:
+      labels:
+        app: hello-receiver
+    spec:
+      containers:
+      - name: hello-receiver
+        image: hello_receiver:latest
+        ports:
+        - containerPort: 5000

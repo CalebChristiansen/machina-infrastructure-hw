@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-interface
+  template:
+    metadata:
+      labels:
+        app: web-interface
+    spec:
+      containers:
+      - name: web-interface
+        image: web_interface:latest
+        ports:
+        - containerPort: 8080
