@@ -15,5 +15,6 @@ spec:
       containers:
       - name: hello-receiver
         image: hello_receiver:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

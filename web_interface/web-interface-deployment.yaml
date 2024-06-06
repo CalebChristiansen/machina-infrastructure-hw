@@ -15,5 +15,6 @@ spec:
       containers:
       - name: web-interface
         image: web_interface:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

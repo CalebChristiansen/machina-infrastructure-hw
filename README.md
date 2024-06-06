@@ -16,7 +16,7 @@ This application broadcasts "Hello world" messages at random intervals and displ
 - Minikube
 - Kubernetes
 
-### Instructions for Windows
+### Instructions
 
 1. Start Minikube:
 
@@ -26,8 +26,14 @@ This application broadcasts "Hello world" messages at random intervals and displ
 
 2. Ensure Docker is using the Minikube Docker daemon:
 
+    Windows:
     ```powershell
     & minikube -p minikube docker-env --shell powershell | Invoke-Expression
+    ```
+
+    Unix:
+    ```bash
+    eval $(minikube -p minikube docker-env)
     ```
 
 3. Build Docker images:
@@ -38,7 +44,14 @@ This application broadcasts "Hello world" messages at random intervals and displ
     docker build -t web_interface:latest -f web_interface/Dockerfile web_interface/
     ```
 
-4. Apply Kubernetes deployments and services:
+4. Deploy RabbitMQ:
+    
+    ```powershell
+    kubectl apply -f rabbitmq/rabbitmq-deployment.yaml
+    kubectl apply -f services/rabbitmq-service.yaml
+    ```
+
+5. Apply Kubernetes deployments and services:
 
     ```powershell
     kubectl apply -f broadcaster/broadcaster-deployment.yaml
@@ -51,10 +64,18 @@ This application broadcasts "Hello world" messages at random intervals and displ
 
     ```
 
-5. Access the web interface:
+6. Access the web interface:
 
     ```powershell
-    minikube service web-interface
+    minikube ip
     ```
 
-    Open the provided URL in your web browser to view the "Hello world" messages in real-time.
+    Note the IP address returned by the command.
+
+    Combine the Minikube IP with the NodePort (30007):
+
+    ```
+    http://<minikube-ip>:30007
+    ```
+
+    Open this URL in your web browser to view the "Hello world" messages in real-time.

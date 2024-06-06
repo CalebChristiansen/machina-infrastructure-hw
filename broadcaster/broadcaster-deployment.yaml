@@ -15,5 +15,6 @@ spec:
       containers:
       - name: hello-broadcaster
         image: hello_broadcaster:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
