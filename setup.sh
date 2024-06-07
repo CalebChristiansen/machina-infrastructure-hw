@@ -22,7 +22,13 @@ docker tag machina-infrastructure-hw-web-service:latest web_service:latest
 echo "Applying Kubernetes configurations..."
 kubectl apply -f k8s/
 
-# Step 6: Access the Web Service
+# Step 6: Wait for the Pods to be Ready
+echo "Waiting for pods to be ready..."
+while [[ $(kubectl get pods -l app=web-service -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
+  echo "Waiting for web-service pod to be ready (this will take a moment)..." && sleep 5
+done
+
+# Step 7: Access the Web Service
 echo "Accessing the web service..."
 minikube service web-service-service
 

@@ -18,5 +18,14 @@ def receive_message():
 def get_messages():
     return {"messages": messages}, 200
 
+@app.route('/messages/since', methods=['GET'])
+def get_messages_since():
+    timestamp = request.args.get('timestamp')
+    if not timestamp:
+        return {"messages": messages}, 200
+
+    filtered_messages = [msg for msg in messages if msg['timestamp'] > timestamp]
+    return {"messages": filtered_messages}, 200
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)

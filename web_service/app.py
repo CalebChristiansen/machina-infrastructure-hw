@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string, jsonify, request
 import requests
 
 app = Flask(__name__)
@@ -26,22 +26,23 @@ def index():
 
             function fetchMessages() {
                 $.ajax({
-                    url: '/latest-message',
+                    url: '/messages-since',
                     method: 'GET',
+                    data: {timestamp: lastTimestamp},
                     success: function(data) {
-                        if (data.message && data.message.timestamp && data.message.timestamp !== lastTimestamp) {
-                            lastTimestamp = data.message.timestamp;
+                        data.messages.forEach(function(message) {
                             $('#messages').prepend(`
                                 <div class="col-md-4 mb-3">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h5 class="card-title">${data.message.text}</h5>
-                                            <p class="card-text"><small class="text-muted">${new Date(data.message.timestamp).toLocaleString()}</small></p>
+                                            <h5 class="card-title">${message.text}</h5>
+                                            <p class="card-text"><small class="text-muted">${new Date(message.timestamp).toLocaleString()}</small></p>
                                         </div>
                                     </div>
                                 </div>
                             `);
-                        }
+                            lastTimestamp = message.timestamp;
+                        });
                     }
                 });
             }
@@ -54,14 +55,14 @@ def index():
     </html>
     """)
 
-@app.route('/latest-message')
-def get_latest_message():
+@app.route('/messages-since', methods=['GET'])
+def get_messages_since():
+    timestamp = request.args.get('timestamp')
     try:
-        response = requests.get('http://hello-receiver-service:5001/messages')
+        response = requests.get(f'http://hello-receiver-service:5001/messages/since?timestamp={timestamp}')
         response.raise_for_status()  # Ensure we raise an exception for HTTP errors
         messages = response.json().get('messages', [])
-        latest_message = messages[-1] if messages else None
-        return jsonify(message=latest_message)
+        return jsonify(messages=messages)
     except requests.exceptions.RequestException as e:
         return jsonify(error=str(e)), 500
 
