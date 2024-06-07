@@ -1,81 +1,107 @@
-# Hello World Application
+# Infrastructure HW
 
-This application broadcasts "Hello world" messages at random intervals and displays them on a web interface in real-time.
+## Project Overview
 
-## Services
+This project sets up an infrastructure for a small application with the following services:
+1. **Hello Broadcaster Service**: Broadcasts "Hello world" at random intervals between 1 to 10 seconds.
+2. **Hello Receiver Service**: Receives and stores "Hello world" broadcasts along with their timestamps.
+3. **Web Service**: Displays the received "Hello world" broadcasts in a web browser, with the newest messages at the top.
 
-- **Broadcaster**: Sends "Hello world" messages at random intervals.
-- **Receiver**: Receives the messages and provides an API to fetch them.
-- **Web Interface**: Displays the messages in real-time.
+The solution uses Docker to containerize the services and Minikube to orchestrate them locally. It has been tested on a Windows 11 machine using git bash.
 
-## Setup
-
-### Prerequisites
+## Prerequisites
 
 - Docker
 - Minikube
-- Kubernetes
+- kubectl
 
-### Instructions
+## Setup Instructions
 
-1. Start Minikube:
+### Automated Setup
 
-   ```powershell
-   minikube start --driver=docker
-   ```
+To set up the infrastructure automatically, you can use the provided `setup.sh` script.
 
-2. Ensure Docker is using the Minikube Docker daemon:
+1. **Run the Setup Script**
 
-    Windows:
-    ```powershell
-    & minikube -p minikube docker-env --shell powershell | Invoke-Expression
+    ```sh
+    ./setup.sh
     ```
 
-    Unix:
-    ```bash
-    eval $(minikube -p minikube docker-env)
+This script will:
+1. Start Minikube.
+2. Set up Minikube Docker environment.
+3. Build Docker images.
+4. Tag Docker images.
+5. Apply Kubernetes configurations.
+6. Access the web service and provide the URL.
+
+### Teardown Instructions
+
+To clean up the environment automatically, you can use the provided `teardown.sh` script.
+
+1. **Run the Teardown Script**
+
+    ```sh
+    ./teardown.sh
     ```
 
-3. Build Docker images:
+This script will:
+1. Delete project-specific Kubernetes deployments.
+2. Delete project-specific Kubernetes services.
+3. Optionally stop Minikube (commented out by default).
+4. Optionally delete the Minikube cluster (commented out by default).
+5. Optionally reset the Docker environment (commented out by default).
 
-    ```powershell
-    docker build -t hello_broadcaster:latest -f broadcaster/Dockerfile broadcaster/
-    docker build -t hello_receiver:latest -f receiver/Dockerfile receiver/
-    docker build -t web_interface:latest -f web_interface/Dockerfile web_interface/
-    ```
+### Manual Setup
 
-4. Deploy RabbitMQ:
-    
-    ```powershell
-    kubectl apply -f rabbitmq/rabbitmq-deployment.yaml
-    kubectl apply -f services/rabbitmq-service.yaml
-    ```
+#### Step 1: Start Minikube
 
-5. Apply Kubernetes deployments and services:
+Start Minikube to create a local Kubernetes cluster:
 
-    ```powershell
-    kubectl apply -f broadcaster/broadcaster-deployment.yaml
-    kubectl apply -f receiver/receiver-deployment.yaml
-    kubectl apply -f web_interface/web-interface-deployment.yaml
+```sh
+minikube start
+```
 
-    kubectl apply -f services/broadcaster-service.yaml
-    kubectl apply -f services/receiver-service.yaml
-    kubectl apply -f services/web-interface-service.yaml
+#### Step 2: Set Up Minikube Docker Environment
 
-    ```
+Configure your shell to use Minikube's Docker daemon:
 
-6. Access the web interface:
+```sh
+eval $(minikube -p minikube docker-env)
+```
 
-    ```powershell
-    minikube ip
-    ```
+#### Step 3: Build Docker Images
 
-    Note the IP address returned by the command.
+Navigate to the project directory where `docker-compose.yml` is located and build the Docker images
 
-    Combine the Minikube IP with the NodePort (30007):
+```sh
+docker-compose build
+```
 
-    ```
-    http://<minikube-ip>:30007
-    ```
+#### Step 4: Tag Docker Images
 
-    Open this URL in your web browser to view the "Hello world" messages in real-time.
+Tag the Docker images correctly:
+
+```sh
+docker tag machina-infrastructure-hw-broadcaster-service:latest hello_broadcaster:latest
+docker tag machina-infrastructure-hw-receiver-service:latest hello_receiver:latest
+docker tag machina-infrastructure-hw-web-service:latest web_service:latest
+```
+
+#### Step 5: Apply Kubernetes Configurations
+
+Apply the Kubernetes configuration files to deploy the services:
+
+```sh
+kubectl apply -f k8s/
+```
+
+#### Step 6: Access the Web Service
+
+Get the URL to access the web service using Minikube:
+
+```sh
+minikube service web-service-service
+```
+
+Open the provided URL in a web browser to see the "Hello world" broadcasts.

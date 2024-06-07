@@ -1,4 +1,5 @@
 from flask import Flask, request
+import datetime
 
 app = Flask(__name__)
 messages = []
@@ -6,7 +7,11 @@ messages = []
 @app.route('/receive', methods=['POST'])
 def receive_message():
     content = request.json
-    messages.append(content["message"])
+    message = {
+        "text": content["message"],
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+    messages.append(message)
     return '', 200
 
 @app.route('/messages', methods=['GET'])
